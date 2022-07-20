@@ -1,7 +1,38 @@
+import joi from 'joi'
+
 export const split_payment = async (req, res, next) => {
+
 
         try {
                 
+                // setting required and enforcing constraints on types with joi
+
+                const bodySchema = joi.object({
+
+                        ID: joi.number().required(),
+                        Amount: joi.number().required(),
+                        Currency: joi.string().required(),
+                        CustomerEmail: joi.string().email().required(),
+                        SplitInfo: joi
+                                        .array()
+                                        .items(
+                                                joi.object({
+
+                                                        SplitType: joi.string().required(),
+                                                        SplitValue: joi.string().required(),
+                                                        SplitEntityId: joi.string().required()
+                                                })
+                                        )
+                                        .required()
+
+                })
+
+                const valid = bodySchema.validate(req.body)
+
+                if (valid.error) {
+                        return res.status(403).json({message: 'Error validating...', info: valid })
+                }
+
                 let Amount = req.body.Amount;
 
                 const reqbody = {
