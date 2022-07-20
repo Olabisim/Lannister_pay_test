@@ -19,10 +19,12 @@ export const split_payment = async (req, res, next) => {
                                                 joi.object({
 
                                                         SplitType: joi.string().required(),
-                                                        SplitValue: joi.string().required(),
+                                                        SplitValue: joi.number().required(),
                                                         SplitEntityId: joi.string().required()
                                                 })
                                         )
+                                        .min(1)
+                                        .max(20)
                                         .required()
 
                 })
