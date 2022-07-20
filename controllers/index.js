@@ -12,29 +12,26 @@ export const split_payment = async (req, res, next) => {
                         SplitInfo: req.body.SplitInfo,
                 }
 
-                let Amount2;
-
-
-
-                // Initial Balance: 
-                // 4500
-
-                // Split amount for "LNPYACC0019": 450
-                // Balance after split calculation for "LNPYACC0019": (4500 - 450)
-                // 4050
-
-                // Split amount for "LNPYACC0011": 2300
-                // Balance after split calculation for "LNPYACC0011": (4050 - 2300)
-                // 1750
-
-                // Final Balance: 1750
-
                 
                 console.log("")
                 console.log("Initial Balance: ")
                 console.log(Amount)
 
-                const mapSplitBreakdown = req.body.SplitInfo.map((e, i) => {
+                const mapSplitBreakdown = req.body.SplitInfo
+                .sort((a,b) => {
+
+                        const first = a.SplitType.toLowerCase();
+                        const second = b.SplitType.toLowerCase();
+
+                        if(first < second) {
+                                return -1;
+                        }
+                        if(first > second) {
+                                return 1;
+                        }
+                        return 0;
+                })
+                .map((e) => {
 
                         if(e.SplitType === "FLAT" || e.SplitType === "PERCENTAGE" || e.SplitType === "RATIO")
                         {
@@ -52,12 +49,8 @@ export const split_payment = async (req, res, next) => {
                                         Amount: e.SplitValue
                                 }
                         }
-                        else {
-                                return {
-                                        default: "splitType must be flat percentage or ratio"
-                                }
-                        }
                 })
+                .filter(curr => curr != undefined )
 
                 
                 console.log("")
