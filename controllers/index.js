@@ -149,7 +149,15 @@ export const split_payment = async (req, res, next) => {
 
                 
                 console.log("")
-                Amount = Amount
+
+                
+                if (Amount < 0) {
+                        return res.status(403).json({
+                                message: 'Amount cannot be less than 0', 
+                                info: {Amount} 
+                        })
+                }
+
                 console.log(`Final Balance: ${Amount}`)
 
                 const displayBody = {
