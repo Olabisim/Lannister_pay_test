@@ -44,5 +44,13 @@ app.use(responseTime((req, res, time) => {
 
 app.post('/split-payments/compute', split_payment)
 
+// unhandled routes 
+
+app.all("*", (req, res, next) => {
+        res.status(404).json({
+                status: "fail",
+                message: `Can't find ${req.url} on this server`
+        })
+})
 
 export default app;
