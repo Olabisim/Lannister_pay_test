@@ -219,9 +219,9 @@ export const split_payment = async (req, res, next) => {
                         SplitBreakdown: mapSplitBreakdown
                 }
                 
-                res.status(201).json({
+                res.status(200).json({
                         status: "success",
-                        message: "endpoint successfully accepted it",
+                        message: "endpoint computation successfullt",
                         data: {
                                 displayBody
                         }
