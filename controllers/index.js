@@ -94,6 +94,14 @@ export const split_payment = async (req, res, next) => {
                                                         }
                                                 })
                                         }
+                                        if (Amount < 0) {
+                                                return res.status(403).json({
+                                                        message: "split Amount cannot be less than zero",
+                                                        info: {
+                                                                splitAmount: Amount
+                                                        }
+                                                })
+                                        }
         
                         })
                          
@@ -125,6 +133,15 @@ export const split_payment = async (req, res, next) => {
                                                 info: {
                                                         splitAmount: Amount,
                                                         transactionAmount: req.body.Amount
+                                                }
+                                        })
+                                }
+                                
+                                if (Amount < 0) {
+                                        return res.status(403).json({
+                                                message: "split Amount cannot be less than zero",
+                                                info: {
+                                                        splitAmount: Amount
                                                 }
                                         })
                                 }
@@ -169,6 +186,14 @@ export const split_payment = async (req, res, next) => {
                                         info: {
                                                 splitAmount: Amount,
                                                 transactionAmount: req.body.Amount
+                                        }
+                                })
+                        }
+                        if (Amount < 0) {
+                                return res.status(403).json({
+                                        message: "split Amount cannot be less than zero",
+                                        info: {
+                                                splitAmount: Amount
                                         }
                                 })
                         }
