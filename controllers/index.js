@@ -37,14 +37,7 @@ export const split_payment = async (req, res, next) => {
 
                 let Amount = req.body.Amount;
 
-                const reqbody = {
-                        ID: req.body.ID,
-                        Amount: req.body.Amount,
-                        Currency: req.body.Currency,
-                        CustomerEmail: req.body.CustomerEmail,
-                        SplitInfo: req.body.SplitInfo,
-                }
-
+                let totalComputation = 0;
                 
                 console.log("")
                 console.log("Initial Balance: ")
@@ -113,7 +106,7 @@ export const split_payment = async (req, res, next) => {
                 const percentageMapSplitBreakdown = req.body.SplitInfo.filter(e => e.SplitType === "PERCENTAGE").map((e) => {
 
 
-                                let percentageNumber = (Number(e.SplitValue) / 100 * Amount).toFixed(1);
+                                let percentageNumber = Number((Number(e.SplitValue) / 100 * Amount).toFixed(1));
                                 console.log(`Split amount for "${e.SplitEntityId}" : (${e.SplitValue} % OF ${Amount}) = ${percentageNumber} `)
                                 
                                 console.log(`Balance after split calculation for "${e.SplitEntityId}" : ( ${Amount} - ${percentageNumber} ) `)
@@ -168,7 +161,7 @@ export const split_payment = async (req, res, next) => {
                 const RatioMapSplitBreakdown = req.body.SplitInfo.filter(e => e.SplitType === "RATIO").map((e) => {
 
 
-                        let ratioAmount = (Number(e.SplitValue) / totalRatio * Amount2).toFixed(2);
+                        let ratioAmount = Number((Number(e.SplitValue) / totalRatio * Amount2).toFixed(2));
                         console.log(`Split amount for "${e.SplitEntityId}" : ((${e.SplitValue} / ${totalRatio}) * ${Amount2}) = ${ratioAmount} `)
                         console.log(`Balance after split calculation for "${e.SplitEntityId}" : ( ${Amount} - ${ratioAmount} ) `)
                         Amount = (Amount - ratioAmount).toFixed(2)
@@ -207,6 +200,28 @@ export const split_payment = async (req, res, next) => {
                         return res.status(403).json({
                                 message: 'Amount cannot be less than 0', 
                                 info: {Amount} 
+                        })
+                }
+
+                // The sum of all split Amount values computed cannot be greated than the transaction Amount
+                
+                let totalSplitAmountValuesComputed = mapSplitBreakdown.reduce((total, current) => {
+
+                        total += current.Amount;
+                        console.log(total)
+                        return total
+
+                }, 0)
+
+                console.log(totalSplitAmountValuesComputed)
+
+                if( totalSplitAmountValuesComputed + 1 > req.body.Amount) {
+                        return res.status(403).json({
+                                status: "error: The sum of all split Amount values computed cannot be greated than the transaction Amount",
+                                data: {
+                                        totalSplitAmountValuesComputed,
+                                        Amount: req.body.Amount
+                                }
                         })
                 }
 
