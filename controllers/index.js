@@ -1,6 +1,6 @@
 import joi from 'joi'
 
-export const split_payment = async (req, res, next) => {
+export const split_payment = (req, res) => {
 
 
         try {
@@ -215,7 +215,7 @@ export const split_payment = async (req, res, next) => {
 
                 console.log(totalSplitAmountValuesComputed)
 
-                if( totalSplitAmountValuesComputed + 1 > req.body.Amount) {
+                if( totalSplitAmountValuesComputed > req.body.Amount) {
                         return res.status(403).json({
                                 status: "error: The sum of all split Amount values computed cannot be greated than the transaction Amount",
                                 data: {
