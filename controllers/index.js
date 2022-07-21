@@ -84,6 +84,16 @@ export const split_payment = async (req, res, next) => {
                                         Amount = Amount - e.SplitValue
                                         console.log(Amount)
                                         console.log("")
+
+                                        if (Amount > req.body.Amount) {
+                                                return res.status(403).json({
+                                                        message: "split Amount value computed for each entity cannot be greater than the transaction Amount",
+                                                        info: {
+                                                                splitAmount: Amount,
+                                                                transactionAmount: req.body.Amount
+                                                        }
+                                                })
+                                        }
         
                         })
                          
@@ -103,10 +113,21 @@ export const split_payment = async (req, res, next) => {
 
                                 console.log(Amount)
                                 console.log("")
+                                
                                 mapSplitBreakdown.push({
                                         SplitEntityId: e.SplitEntityId,
                                         Amount: percentageNumber
                                 })
+
+                                if (Amount > req.body.Amount) {
+                                        return res.status(403).json({
+                                                message: "split Amount value computed for each entity cannot be greater than the transaction Amount",
+                                                info: {
+                                                        splitAmount: Amount,
+                                                        transactionAmount: req.body.Amount
+                                                }
+                                        })
+                                }
 
                 })
 
@@ -129,10 +150,6 @@ export const split_payment = async (req, res, next) => {
 
                 const RatioMapSplitBreakdown = req.body.SplitInfo.filter(e => e.SplitType === "RATIO").map((e) => {
 
-                        
-                        // Split amount for "LNPYACC0011": ((3/5) * 1396.8) = 838.08
-                        // Balance after split calculation for "LNPYACC0011": (1396.8 - (838.08))
-                        // 558.72
 
                         let ratioAmount = (Number(e.SplitValue) / totalRatio * Amount2).toFixed(2);
                         console.log(`Split amount for "${e.SplitEntityId}" : ((${e.SplitValue} / ${totalRatio}) * ${Amount2}) = ${ratioAmount} `)
@@ -145,6 +162,16 @@ export const split_payment = async (req, res, next) => {
                                 SplitEntityId: e.SplitEntityId,
                                 Amount: ratioAmount
                         })
+                        
+                        if (Amount > req.body.Amount) {
+                                return res.status(403).json({
+                                        message: "split Amount value computed for each entity cannot be greater than the transaction Amount",
+                                        info: {
+                                                splitAmount: Amount,
+                                                transactionAmount: req.body.Amount
+                                        }
+                                })
+                        }
                 })
 
                 
