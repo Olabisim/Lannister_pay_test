@@ -36,8 +36,6 @@ export const split_payment = (req, res) => {
                 }
 
                 let Amount = req.body.Amount;
-
-                let totalComputation = 0;
                 
                 console.log("")
                 console.log("Initial Balance: ")
@@ -67,36 +65,36 @@ export const split_payment = (req, res) => {
 
                 const flatMapSplitBreakdown = req.body.SplitInfo.filter(e => e.SplitType === "FLAT").map((e) => {
 
-                                        console.log(`Split amount for "${e.SplitEntityId}" : ${e.SplitValue} `)
-                                        console.log(`Balance after split calculation for "${e.SplitEntityId}" : ( ${Amount} - ${e.SplitValue} ) `)
-                                        
-                                        mapSplitBreakdown.push({
-                                                SplitEntityId: e.SplitEntityId,
-                                                Amount: e.SplitValue
-                                        })
-                                        Amount = Amount - e.SplitValue
-                                        console.log(Amount)
-                                        console.log("")
-
-                                        if (Amount > req.body.Amount) {
-                                                return res.status(403).json({
-                                                        message: "split Amount value computed for each entity cannot be greater than the transaction Amount",
-                                                        info: {
-                                                                splitAmount: Amount,
-                                                                transactionAmount: req.body.Amount
-                                                        }
-                                                })
-                                        }
-                                        if (Amount < 0) {
-                                                return res.status(403).json({
-                                                        message: "split Amount cannot be less than zero",
-                                                        info: {
-                                                                splitAmount: Amount
-                                                        }
-                                                })
-                                        }
-        
+                        console.log(`Split amount for "${e.SplitEntityId}" : ${e.SplitValue} `)
+                        console.log(`Balance after split calculation for "${e.SplitEntityId}" : ( ${Amount} - ${e.SplitValue} ) `)
+                        
+                        mapSplitBreakdown.push({
+                                SplitEntityId: e.SplitEntityId,
+                                Amount: e.SplitValue
                         })
+                        Amount = Amount - e.SplitValue
+                        console.log(Amount)
+                        console.log("")
+
+                        if (Amount > req.body.Amount) {
+                                return res.status(403).json({
+                                        message: "split Amount value computed for each entity cannot be greater than the transaction Amount",
+                                        info: {
+                                                splitAmount: Amount,
+                                                transactionAmount: req.body.Amount
+                                        }
+                                })
+                        }
+                        if (Amount < 0) {
+                                return res.status(403).json({
+                                        message: "split Amount cannot be less than zero",
+                                        info: {
+                                                splitAmount: Amount
+                                        }
+                                })
+                        }
+
+                })
                          
                 console.log("")
                 console.log("PERCENTAGE TYPES COME NEXT")
@@ -106,38 +104,38 @@ export const split_payment = (req, res) => {
                 const percentageMapSplitBreakdown = req.body.SplitInfo.filter(e => e.SplitType === "PERCENTAGE").map((e) => {
 
 
-                                let percentageNumber = Number((Number(e.SplitValue) / 100 * Amount).toFixed(1));
-                                console.log(`Split amount for "${e.SplitEntityId}" : (${e.SplitValue} % OF ${Amount}) = ${percentageNumber} `)
-                                
-                                console.log(`Balance after split calculation for "${e.SplitEntityId}" : ( ${Amount} - ${percentageNumber} ) `)
-                                Amount = Amount - percentageNumber
+                        let percentageNumber = Number((Number(e.SplitValue) / 100 * Amount).toFixed(1));
+                        console.log(`Split amount for "${e.SplitEntityId}" : (${e.SplitValue} % OF ${Amount}) = ${percentageNumber} `)
+                        
+                        console.log(`Balance after split calculation for "${e.SplitEntityId}" : ( ${Amount} - ${percentageNumber} ) `)
+                        Amount = Amount - percentageNumber
 
-                                console.log(Amount)
-                                console.log("")
-                                
-                                mapSplitBreakdown.push({
-                                        SplitEntityId: e.SplitEntityId,
-                                        Amount: percentageNumber
+                        console.log(Amount)
+                        console.log("")
+                        
+                        mapSplitBreakdown.push({
+                                SplitEntityId: e.SplitEntityId,
+                                Amount: percentageNumber
+                        })
+
+                        if (Amount > req.body.Amount) {
+                                return res.status(403).json({
+                                        message: "split Amount value computed for each entity cannot be greater than the transaction Amount",
+                                        info: {
+                                                splitAmount: Amount,
+                                                transactionAmount: req.body.Amount
+                                        }
                                 })
-
-                                if (Amount > req.body.Amount) {
-                                        return res.status(403).json({
-                                                message: "split Amount value computed for each entity cannot be greater than the transaction Amount",
-                                                info: {
-                                                        splitAmount: Amount,
-                                                        transactionAmount: req.body.Amount
-                                                }
-                                        })
-                                }
-                                
-                                if (Amount < 0) {
-                                        return res.status(403).json({
-                                                message: "split Amount cannot be less than zero",
-                                                info: {
-                                                        splitAmount: Amount
-                                                }
-                                        })
-                                }
+                        }
+                        
+                        if (Amount < 0) {
+                                return res.status(403).json({
+                                        message: "split Amount cannot be less than zero",
+                                        info: {
+                                                splitAmount: Amount
+                                        }
+                                })
+                        }
 
                 })
 
